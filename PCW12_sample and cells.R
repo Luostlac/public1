@@ -1,9 +1,10 @@
+##Seurat5
 library(dplyr)
-library(Seurat)
+library(Seurat) 
 library(patchwork)
 
 # Load the PBMC dataset
-pbmc.data <- Read10X(data.dir = "D:/cellranger3.1_gh38/FB20195_cellranger3.1_gh38/filtered_feature_bc_matrix/")
+pbmc.data <- Read10X(data.dir = "D:/.../")
 # Initialize the Seurat object with the raw (non-normalized data).
 pbmc <- CreateSeuratObject(counts = pbmc.data, project = "pbmc3k", min.cells = 3, min.features = 200)
 pbmc
@@ -50,7 +51,4 @@ pbmc <- RunUMAP(pbmc, dims = 1:12)
 # individual clusters
 DimPlot(pbmc, reduction = "umap", label = T)
 FeaturePlot(pbmc, features = c("HNRNPH1", "SOX11", "CTNNB1", "ACTB"), cols = c('azure3',"yellow", "red")))
-new.cluster.ids <- c("TCP", "GCP", "Purkinje", "UBC", "Granule_cell", "NSC", "Diff.UBC", "Microglia", "Dev.Purkinje", "GCP_P", "UBC_P", "GABA.intern", "Cycling_GCP", "TCP", "TCP", "NSC", "Purkinje", "Endothelial", "Microglia", "Glial-progenitor","TCP", "Red_blood_cell", "Unkown")
-names(new.cluster.ids) <- levels(pbmc)
-pbmc <- RenameIdents(pbmc, new.cluster.ids)
-DimPlot(pbmc, reduction = "umap", pt.size = 0.5)
+
