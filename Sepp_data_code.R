@@ -3,7 +3,7 @@
 library(dplyr)
 library(Seurat)
 library(patchwork)
-pbmc = readRDS("/Volumes/Zaili/cellranger3.1_gh38/Sepp.rds")
+pbmc = readRDS("/.../Sepp.rds")
 
 DATA=pbmc[['RNA']]@data
 
@@ -19,20 +19,19 @@ rownames(DATA)=SYMBOL[USED]
 
 ###DATA=pbmc@assays$RNA@data
 
-RDATA=DATA[,sample(1:ncol(DATA),120000)]
-duplicated_rows <- RDATA[duplicated(rownames(RDATA)), ]
+
+duplicated_rows <- DATA[duplicated(rownames(DATA)), ]
 if (nrow(duplicated_rows) > 0) {
-  rownames(RDATA) <- make.names(rownames(RDATA), unique=TRUE)
+  rownames(DATA) <- make.names(rownames(DATA), unique=TRUE)
 }
 
-pbmc <- CreateSeuratObject(counts = RDATA, project = "pbmc3k", min.cells = 3, min.features = 200)
+pbmc <- CreateSeuratObject(counts = DATA, project = "pbmc3k", min.cells = 3, min.features = 200)
 pbmc
 #QC
 pbmc[["percent.mt"]] <- PercentageFeatureSet(pbmc, pattern = "^MT-")
 # Visualize QC metrics as a violin plot
 VlnPlot(pbmc, features = c("nFeature_RNA", "nCount_RNA", "percent.mt"), pt.size = 0, ncol = 3)
 rm(DATA)
-rm(RDATA)
 gc()
 
 ###pbmc <- subset(pbmc, subset = nFeature_RNA > 500 & nFeature_RNA < 5000)
@@ -64,8 +63,14 @@ pbmc <- RunUMAP(pbmc, dims = 1:14)
 # note that you can set `label = TRUE` or use the LabelClusters function to help label
 # individual clusters
 DimPlot(pbmc, reduction = "umap", label = T)
-FeaturePlot(pbmc, features = c("NES", "HES5", "SOX11", "HNRNPH1"), cols = c('azure3',"darkgoldenrod","red", "red3"))
+FeaturePlot(pbmc, features = c("NES", "HES5", "SOX11", "HNRNPH1"), cols = c('azure3',"yellow","red"))
 
+
+###########################
+pbmc <- RunUMAP(pbmc, dims = 1:13, min.dist = 0.2, n.neighbors = 35L)
+DimPlot(pbmc, reduction = "umap", label = T)
+FeaturePlot(pbmc, features = c("NES", "HES5", "SOX11", "CTNNB1"), cols = c("azure3", "yellow","red", min=1))
+#################################
 
 new.cluster.ids <- c("c0", "c1", "c2", "c3", "c4", "c5", "c6", "c7", "c8", "c9", "c10", "c11", "c12", "c13", "c14", "c15", "c16", "c17", "c18", "c19","c20", "c21", "c22", "c23", "c24", "c25", "c26", "c27", "c28", "c29","c30", "c31", "c32", "c33", "c34", "c35","c36", "c37", "c38", "c39", "c40", "c41")
 names(new.cluster.ids) <- levels(pbmc)
@@ -73,7 +78,7 @@ pbmc <- RenameIdents(pbmc, new.cluster.ids)
 DimPlot(pbmc, reduction = "umap", label = TRUE, pt.size = 0.5)
 
 pbmc@meta.data$celltype=pbmc@active.ident
-saveRDS(pbmc, file = "/Volumes/Zaili/cellranger3.1_gh38/Sepp_120k_cells.rds")
+saveRDS(pbmc, file = ".../Sepp_All_cells2.rds")
 
 
 
@@ -83,10 +88,10 @@ saveRDS(pbmc, file = "/Volumes/Zaili/cellranger3.1_gh38/Sepp_120k_cells.rds")
 library(rliger)
 library(Seurat)
 library(SeuratWrappers)
-d2 = readRDS("D:/cellranger3.1_gh38/Sepp_120k_cells.rds")
+d2 = readRDS(".../Sepp_All_cells2.rds")
 DimPlot(d2, reduction = "umap", label = TRUE, pt.size = 0.5)
 d2@meta.data$celltype=d2@active.ident
-d1 = readRDS("D:/zaili_old_driver/Data_all/Data/single_cells/TOTAL/Refere/LIGER/Human23_1final.rds")
+d1 = readRDS(".../Human23_1final.rds")
 
 d3 <- merge(d1,d2) ##  62415 122146
 g1 <- rownames(d1@assays$RNA@data);g2 <- rownames(d2@assays$RNA@data)
@@ -112,7 +117,7 @@ pbmcsca <- RunQuantileNorm(pbmcsca, split.by = "original_dataset")
 # You can optionally perform Louvain clustering (`FindNeighbors` and `FindClusters`) after
 # `RunQuantileNorm` according to your needs
 
-pbmcsca <- FindNeighbors(pbmcsca, reduction = "iNMF", dims = 1:15)
+pbmcsca <- FindNeighbors(pbmcsca, reduction = "iNMF", dims = 1:12)
 pbmcsca <- FindClusters(pbmcsca, resolution = 0.4)
 # Dimensional reduction and plotting
 pbmcsca <- RunUMAP(pbmcsca, dims = 1:ncol(pbmcsca[["iNMF"]]), reduction = "iNMF")
@@ -129,7 +134,7 @@ makeRiverplot(pbmcsca.liger,
               cluster1 = cluster1,
               cluster2 = cluster2,river.yscale = 7,label.cex = 1, min.frac = 0.1)
 
-saveRDS(pbmcsca, file = "D:/cellranger3.1_gh38/Sepp/Sepp_pbmcsca.rds")
+saveRDS(pbmcsca, file = ".../Sepp_pbmcsca.rds")
 
 
 
