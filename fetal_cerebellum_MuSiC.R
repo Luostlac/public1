@@ -5,9 +5,8 @@ library(Biobase)
 library(Seurat)
 
 
-pbmc=readRDS('../Cerebellum/pbmc_sub.rds')
+pbmc=readRDS('../Cerebellum/pbmc_sub.rds')##Only use neuronal cells for MuSiC
 
-#TMP=read.table('SHH_G3_G4_markers.txt',sep='\t',row.names=NULL,header=T)
 TMP=read.table('MB1_RNA_for_deconv_all.csv',sep=',',row.names=NULL,header=T)
 TMP=TMP[which(TMP[,1] %in% names(which(table(TMP[,1])==1))),]
 BULK=TMP[,c(2:ncol(TMP))]
